@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
 import { DataService } from '../services/data.service';
 import Swal from 'sweetalert2';
 import { DomSanitizer } from '@angular/platform-browser';
@@ -11,6 +11,7 @@ import { HttpClient } from '@angular/common/http';
 	styleUrls: ['./home.component.css']
 })
 export class HomeComponent implements OnInit {
+	@ViewChild ("selectAll") selectAll:ElementRef
 	loader = true
 	loader1 = false
 	books: any = []
@@ -35,10 +36,11 @@ export class HomeComponent implements OnInit {
 			this.loader = true
 		})
 	}
-
+	checkbox
 	selectAllBooks(e) {
 		this.selectedBooks = []
 		const allCheckBoxes = document.querySelectorAll(".check") as NodeListOf<HTMLInputElement>;
+		
 		if (e.target.checked) {
 			allCheckBoxes.forEach(checkBox => {
 				checkBox.checked = true;
@@ -70,6 +72,8 @@ export class HomeComponent implements OnInit {
 
 	downloadFile(ext: string) {
 		if (this.selectedBooks.length > 0) {
+			console.log(this.selectedBooks);
+			
 			let message = ""
 			// this.loader1 = true
 			this.selectedBooks.map(id => {
@@ -89,6 +93,7 @@ export class HomeComponent implements OnInit {
 			});
 		
 			this.selectedBooks = []
+			this.selectAll.nativeElement.checked = false
 		}
 		else {
 			Swal.fire({

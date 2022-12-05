@@ -31,7 +31,7 @@
                 <h5 class="px-2">Select file to download</h5>
                 <h5>{{books.length}} Books</h5>
             </div> -->
-            <input id="checkbox" class="mx-4 fs-4" type="checkbox" name="title" (change)="selectAllBooks($event)">
+            <input id="checkbox" #selectAll class="mx-4 fs-4" type="checkbox" name="title" (change)="selectAllBooks($event)">
             <label for="checkbox" class="fw-bold text-secondary" style="cursor: pointer;">Select all</label>
             <hr>
             <div class="books">
