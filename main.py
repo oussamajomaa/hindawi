@@ -1,34 +1,24 @@
-# from collections.abc import Iterable
 from ebooklib import epub
 import ebooklib
 import urllib.request
-import csv
 import requests
-import logging
-from flask import Flask
-from flask import request as req
+from flask import Flask, request
 from flask_cors import CORS
 from bs4 import BeautifulSoup
 import json
-import webbrowser
 
-logging.basicConfig(level=logging.INFO)
-logger = logging.getLogger(__name__)
 
 app = Flask(__name__)
 cors = CORS(app, resources={r"/*": {"origins": "*"}})
-# print(Iterable)
-
-# ["id", "name", "pdf_url"]
 
 
 @app.route('/')
 def get_books():
-    category = req.args.get('category')
+    category = request.args.get('category')
     all_books = []
-    pages = [f"https://www.hindawi.org/books/categories/{category}/{n}/" for n in range(1, 10)]
+    pages = [f"https://www.hindawi.org/books/categories/{category}/{n}/" for n in range(1, 30)]
     for page in pages:
-        logger.info(f"Entering {page}")
+        # logger.info(f"Entering {page}")
 
         resp = requests.get(page)
         soup = BeautifulSoup(resp.text, "html.parser")
@@ -47,49 +37,25 @@ def get_books():
                     "title": title
                 })
 
-    return all_books
+    return json.dumps(all_books)
 
-from pathlib import Path
-downloads_path = str(Path.home() / "Downloads")
 
 @app.route('/downlaod')
 def downlaod_file():
-    ext = req.args.get('ext')
-    id = req.args.get('id')
-    title = req.args.get('title')
+    ext = request.args.get('ext')
+    id = request.args.get('id')
+    title = request.args.get('title')
     myurl = f"https://www.hindawi.org/books/{id}.{ext}"
-    urllib.request.urlretrieve(myurl, f"{downloads_path}/{title}.{ext}")
-    # response = requests.get(myurl)
-    # open(f"{id}.{ext}", "wb").write(response.content)
-    # webbrowser.open(myurl)
-    # with urllib.request.urlopen(myurl) as url:
-    #     file = url.read()
+    urllib.request.urlretrieve(myurl, f"files/{title}.{ext}")
 
-    # Save epub file
-    # with open(f"files/{id}.{ext}", "wb") as f:
-    #     f.write(file)
-
-    return json.dumps({"message":"Book was downloaded successfully!"})
+    # book_text = epub2text(f"files/{title}.{ext}")
+    # book = ""
+    # for line in book_text:
+    #     book += line.strip()
 
 
+    return json.dumps("Books were downloded successfully!")
 
-
-if __name__ == '__main__':
-    app.run(debug=True)
-
-# SAVE EPUB ON LOCAL
-
-# # Read epub file from url
-# myurl = "https://www.hindawi.org/books/84130273.epub"
-# with urllib.request.urlopen(myurl) as url:
-#     s = url.read()
-
-# # Save epub file
-# with open(r"test.epub", "wb") as f:
-#     f.write(s)
-
-
-# CONVERT EPUB TO TXT
 
 # def epub2thtml(epub_path):
 #     book = epub.read_epub(epub_path)
@@ -121,12 +87,8 @@ if __name__ == '__main__':
 #     ttext = thtml2ttext(chapters)
 #     return ttext
 
-# book_text = epub2text("test.epub")
-# book = ""
-# for line in book_text:
-#     book += line.strip()
+if __name__ == '__main__':
+    # app.run()
+    app.run('0.0.0.0',port=5555, debug=True, ssl_context=('cert.pem','key.pem'))
 
-
-# with open('book.txt', 'w', encoding='utf-8') as f:
-#     f.write(book)
 

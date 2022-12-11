@@ -71,21 +71,34 @@ export class HomeComponent implements OnInit {
 	}
 
 	downloadFile(ext: string) {
-		if (this.selectedBooks.length > 0) {
-			console.log(this.selectedBooks);
-			
+		if (this.selectedBooks.length > 0) {			
 			let message = ""
-			// this.loader1 = true
-			this.selectedBooks.map(id => {
+			this.loader1 = true
+			let length = this.selectedBooks.length-1
+			for(let i=0; i<this.selectedBooks.length; i++){
+				let id = this.selectedBooks[i]
 				let item = this.books.filter(book => book.id === id)
 				let title = item[0].title
-				// this.data.downloadBook(ext, id, title).subscribe((res: any) => {
-				// 	message = res.message
-				// 	this.loader1 = false
-				// })
-				let url = (`https://www.hindawi.org/books/${id}.${ext}`)
-				window.open(url);
-			})
+				this.data.downloadBook(ext, id, title).subscribe((res: any) => {
+					// let blob = new Blob([res], {type: 'application/txt'});
+					// var downloadURL = window.URL.createObjectURL(blob);
+					// var link = document.createElement('a');
+					// link.href = downloadURL;
+					// link.download = `${title}.txt`;
+					// link.click();
+								
+					if(i==length) {
+						this.loader1 = false
+						Swal.fire({
+							icon: 'warning',
+							title: "Books downloded succeefully",
+						})
+					}
+				})
+
+				
+			}
+			
 			const allCheckBoxes = document.querySelectorAll(".check") as NodeListOf<HTMLInputElement>;
 		
 			allCheckBoxes.forEach(checkBox => {

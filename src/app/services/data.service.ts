@@ -41,8 +41,8 @@ export class DataService {
     }
 
     downloadBook(ext, id, title) {
-        // return this.http.get(`${environment.url}/downlaod`,{params : {ext:ext, id:id, title:title}})
-        return this.http.get(`https://www.hindawi.org/books/${id}.${ext}`)
+        return this.http.get(`${environment.url}/downlaod`,{params : {ext:ext, id:id, title:title}})
+        // return this.http.get(`https://www.hindawi.org/books/${id}.${ext}`)
     }
 
     getCategory() {
